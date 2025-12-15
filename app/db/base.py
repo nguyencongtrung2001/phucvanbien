@@ -1,7 +1,8 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from app.core.config import settings
-
+import pymysql
+pymysql.install_as_MySQLdb()
 
 print("settings.SQLALCHEMY_DATABASE_URL", settings.SQLALCHEMY_DATABASE_URL)
 engine = create_engine(settings.SQLALCHEMY_DATABASE_URL)
