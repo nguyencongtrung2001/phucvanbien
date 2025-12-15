@@ -5,7 +5,7 @@ from fastapi import Depends
 from app.models.task_model import Task
 from typing import List
 from app.schemas.schemas import TaskBase, TaskResponse,TaskUpdate
-from sqlalchemy import update,delete
+from sqlalchemy import update
 from datetime import datetime
 router = APIRouter()
 
@@ -38,12 +38,12 @@ async def update_task(task_id:int,task:TaskUpdate,db:Session=Depends(get_db)):
 @router.delete("/task/softdelete/{task_id}")
 def delete_soft_task(task_id:int, db:Session=Depends(get_db)):
 
-    db_task = db.query(Task).filter(Task.id == task_id,Task.is_deleted== 0).first()
+    db_task = db.query(Task).filter(Task.id == task_id,Task.is_deleted== False ).first()
     if not db_task:
         raise HTTPException(status_code=404, detail="Task not found")
     
-    stmt = delete(Task).where(Task.id == task_id).values(
-        is_deleted = 1,
+    stmt = update(Task).where(Task.id == task_id).values(
+        is_deleted = True ,
         deleted_at = datetime.now()
     )
     db.execute(stmt)
